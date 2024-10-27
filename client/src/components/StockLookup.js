@@ -6,19 +6,26 @@ function StockLookup() {
   const [symbol, setSymbol] = useState('');
   const [price, setPrice] = useState(null);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await getStockPrice(symbol, token);
-      setPrice(response.data.openPrice);
-      setError('');
-    } catch (err) {
-      setError('Failed to fetch stock price');
-      setPrice(null);
+    setIsLoading(true);
+    setError('');
+    setPrice(null);
+
+    const result = await getStockPrice(symbol, token);
+
+    if (result.success) {
+      setPrice(result.data.openPrice);
+    } else {
+      setError(result.error);
     }
+
+    setIsLoading(false);
   };
+
 
   return (
     <div className="container mt-5">
@@ -37,8 +44,12 @@ function StockLookup() {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Get Price
+        <button 
+          type="submit" 
+          className="btn btn-primary"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Fetching Price...' : 'Get Price'}
         </button>
       </form>
       {price !== null && (

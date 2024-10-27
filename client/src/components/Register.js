@@ -6,16 +6,23 @@ function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await register({ email, password });
+    setIsLoading(true);
+    setError('');
+
+    const result = await register({ email, password });
+
+    if (result.success) {
       navigate('/login');
-    } catch (err) {
-      setError('Registration failed');
+    } else {
+      setError(result.error);
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -45,8 +52,12 @@ function Register() {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Register
+        <button 
+          type="submit" 
+          className="btn btn-primary"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Registering...' : 'Register'}
         </button>
       </form>
     </div>

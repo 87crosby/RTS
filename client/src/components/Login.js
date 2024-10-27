@@ -7,19 +7,27 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login: authLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await login({ email, password });
-      authLogin(response.data.token);
+    setIsLoading(true);
+    setError('');
+
+    const result = await login({ email, password });
+
+    if (result.success) {
+      authLogin(result.data.token);
       navigate('/');
-    } catch (err) {
-      setError('Login failed');
+    } else {
+      setError(result.error);
     }
+
+    setIsLoading(false);
   };
+
 
   return (
     <div className="container mt-5">
@@ -48,8 +56,12 @@ function Login() {
             required
           />
         </div>
-        <button type="submit" className="btn btn-primary">
-          Login
+        <button 
+          type="submit" 
+          className="btn btn-primary"
+          disabled={isLoading}
+        >
+          {isLoading ? 'Logging in...' : 'Login'}
         </button>
       </form>
     </div>
