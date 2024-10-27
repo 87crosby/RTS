@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { getStockPrice } from '../api';
 import { useAuth } from '../context/AuthContext';
 
 function StockLookup() {
@@ -11,12 +11,7 @@ function StockLookup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get(
-        `http://localhost:5000/api/stock/${symbol}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+      const response = await getStockPrice(symbol, token);
       setPrice(response.data.openPrice);
       setError('');
     } catch (err) {

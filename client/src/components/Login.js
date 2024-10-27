@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { login } from '../api';
 import { useAuth } from '../context/AuthContext';
 
 function Login() {
@@ -8,16 +8,13 @@ function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login: authLogin } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/login', {
-        email,
-        password
-      });
-      login(response.data.token);
+      const response = await login({ email, password });
+      authLogin(response.data.token);
       navigate('/');
     } catch (err) {
       setError('Login failed');
