@@ -5,6 +5,7 @@ import Register from './components/Register';
 import Login from './components/Login';
 import StockLookup from './components/StockLookup';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import './custom.css';
 
 const PrivateRoute = ({ children }) => {
   const { token } = useAuth();
